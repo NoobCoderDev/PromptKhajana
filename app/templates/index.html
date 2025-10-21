@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Prompt Khajana{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-4xl font-bold text-gray-900 mb-2">Discover Amazing Prompts</h1>
+    <p class="text-gray-600">Browse and manage your collection of AI prompts</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for prompt in prompts %}
+    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
+        <div class="flex justify-between items-start mb-4">
+            <span class="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">{{ prompt.category }}</span>
+            <span class="text-yellow-500">⭐ {{ prompt.rating }}</span>
+        </div>
+        <h2 class="text-xl font-semibold mb-2 text-gray-900">{{ prompt.title }}</h2>
+        <p class="text-gray-600 mb-2 line-clamp-3">{{ prompt.content[:100] }}...</p>
+        <p class="text-gray-500 text-sm mb-4">
+            {% set time_diff = (prompt.updated_at - prompt.created_at).total_seconds() %}
+            {% if time_diff < 1 %}
+                Created {{ prompt.created_at.strftime('%B %d, %Y') }}
+            {% else %}
+                Updated {{ prompt.updated_at.strftime('%B %d, %Y') }}
+            {% endif %}
+        </p>
+        <div class="flex justify-between items-center">
+            <a href="{{ url_for('main.view_prompt', id=prompt.id) }}" class="text-blue-600 hover:underline">View Details</a>
+            <div class="space-x-2">
+                <a href="{{ url_for('main.edit_prompt', id=prompt.id) }}" class="text-gray-600 hover:text-blue-600">Edit</a>
+                <a href="{{ url_for('main.delete_prompt', id=prompt.id) }}" class="text-gray-600 hover:text-red-600" onclick="return confirm('Delete this prompt?')">Delete</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if prompts|length == 0 %}
+<div class="text-center py-12">
+    <p class="text-gray-600 text-lg mb-4">No prompts yet. Start by adding your first prompt!</p>
+    <a href="{{ url_for('main.add_prompt') }}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">Add Your First Prompt</a>
+</div>
+{% endif %}
+{% endblock %}
