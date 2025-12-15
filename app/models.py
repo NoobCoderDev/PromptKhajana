@@ -19,6 +19,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(200))
     is_admin = db.Column(db.Boolean, default=False)
+    email_verified = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=get_current_timestamp)
     
     def set_password(self, password):
@@ -29,6 +30,35 @@ class User(UserMixin, db.Model):
     
     def is_superadmin(self):
         return self.is_admin
+
+class OTP(db.Model):
+    __tablename__ = 'otps'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), nullable=False, index=True)
+    otp_hash = db.Column(db.String(200), nullable=False)
+    purpose = db.Column(db.String(20), nullable=False)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    attempts = db.Column(db.Integer, default=0)
+    is_used = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=get_current_timestamp)
+    
+    def set_otp(self, otp):
+        self.otp_hash = generate_password_hash(str(otp))
+    
+    def check_otp(self, otp):
+        return check_password_hash(self.otp_hash, str(otp))
+    
+    def is_expired(self):
+        return datetime.utcnow() > self.expires_at
+    
+    def increment_attempts(self):
+        self.attempts += 1
+        db.session.commit()
+    
+    def mark_as_used(self):
+        self.is_used = True
+        db.session.commit()
 
 class Category(db.Model):
     __tablename__ = 'categories'
