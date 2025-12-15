@@ -116,7 +116,7 @@ def send_otp_email(email, otp_code, purpose):
             </div>
             <div class="footer">
                 <p>This is an automated message, please do not reply to this email.</p>
-                <p>&copy; 2024 Prompt Khajana. All rights reserved.</p>
+                <p>&copy; 2025 Prompt Khajana. All rights reserved.</p>
             </div>
         </div>
     </body>
