@@ -168,13 +168,13 @@
                     </a>
 
                     <div class="hidden md:flex space-x-6">
-                        <a href="{{ url_for('main.index') }}"
+                        <a href="{{ url_for('main.index') }}#categories"
                             class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                            Browse
+                            Categories
                         </a>
-                        <a href="{{ url_for('main.add_prompt') }}"
+                        <a href="{{ url_for('main.index') }}?sort=popular"
                             class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                            Add Prompt
+                            Popular
                         </a>
                     </div>
                 </div>
