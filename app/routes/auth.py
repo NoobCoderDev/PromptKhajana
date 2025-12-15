@@ -194,8 +194,9 @@ def verify_signup_otp():
             session.pop('signup_email', None)
             session.pop('signup_password', None)
             
-            flash('Registration successful! Please login.', 'success')
-            return redirect(url_for('auth.login'))
+            login_user(user)
+            flash('Registration successful! Welcome to Prompt Khajana.', 'success')
+            return redirect(url_for('main.index'))
         else:
             flash(message, 'error')
     
