@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.name }} Prompts - Prompt Khajana{% endblock %}
+
+{% block content %}
+<!-- Category Header -->
+<div class="mb-12 text-center animate-fade-in">
+    <div class="text-6xl mb-4 text-indigo-600 dark:text-indigo-400"><i class="{{ category.icon }}"></i></div>
+    <h1 class="text-5xl font-bold mb-4">
+        <span class="gradient-text">{{ category.name }}</span>
+    </h1>
+    {% if category.description %}
+    <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+        {{ category.description }}
+    </p>
+    {% endif %}
+    <div class="mt-4 text-gray-500 dark:text-gray-400">
+        {{ prompts|length }} prompts in this category
+    </div>
+</div>
+
+<!-- Prompts Grid -->
+{% if prompts %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for prompt in prompts %}
+    <div class="card rounded-xl p-6 shadow-md hover:shadow-xl transition animate-fade-in">
+        <!-- Difficulty Badge -->
+        <div class="flex justify-end mb-4">
+            <span class="text-xs px-3 py-1 rounded-full 
+                {% if prompt.difficulty == 'Beginner' %}bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300
+                {% elif prompt.difficulty == 'Intermediate' %}bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300
+                {% else %}bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300{% endif %}">
+                {{ prompt.difficulty }}
+            </span>
+        </div>
+
+        <!-- Title -->
+        <h2
+            class="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+            <a href="{{ url_for('main.view_prompt', id=prompt.id) }}">
+                {{ prompt.title }}
+            </a>
+        </h2>
+
+        <!-- Description -->
+        <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+            {{ prompt.description or prompt.content[:150] + '...' }}
+        </p>
+
+        <!-- Tags -->
+        {% if prompt.tags %}
+        <div class="flex flex-wrap gap-2 mb-4">
+            {% for tag in prompt.tags[:3] %}
+            <span class="text-xs px-2 py-1 rounded-md bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300">
+                #{{ tag.name }}
+            </span>
+            {% endfor %}
+            {% if prompt.tags|length > 3 %}
+            <span class="text-xs px-2 py-1 text-gray-500 dark:text-gray-400">
+                +{{ prompt.tags|length - 3 }} more
+            </span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Stats and Actions -->
+        <div class="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-slate-700">
+            <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                <span class="flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                        <path fill-rule="evenodd"
+                            d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    {{ prompt.views }}
+                </span>
+                <span class="flex items-center">
+                    <svg class="w-4 h-4 mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z">
+                        </path>
+                    </svg>
+                    {{ prompt.rating }}
+                </span>
+            </div>
+
+            <a href="{{ url_for('main.view_prompt', id=prompt.id) }}"
+                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium text-sm transition">
+                View Details →
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<!-- Empty State -->
+<div class="text-center py-16 card rounded-xl shadow-md">
+    <svg class="mx-auto h-24 w-24 text-gray-400 dark:text-gray-600 mb-4" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">No prompts in this category yet</h3>
+    <p class="text-gray-600 dark:text-gray-400 mb-6">
+        Be the first to add a prompt to {{ category.name }}!
+    </p>
+    <a href="{{ url_for('main.add_prompt') }}"
+        class="btn-primary text-white px-6 py-3 rounded-lg font-medium inline-block">
+        Add Prompt
+    </a>
+</div>
+{% endif %}
+
+<!-- Back to Browse -->
+<div class="mt-12 text-center">
+    <a href="{{ url_for('main.index') }}"
+        class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition">
+        ← Back to All Prompts
+    </a>
+</div>
+{% endblock %}
