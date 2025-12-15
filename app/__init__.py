@@ -1,12 +1,10 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail
 import os
 
 db = SQLAlchemy()
-migrate = Migrate()
 login_manager = LoginManager()
 mail = Mail()
 
@@ -30,7 +28,6 @@ def configure_app(app):
 
 def initialize_extensions(app):
     db.init_app(app)
-    migrate.init_app(app, db)
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
     mail.init_app(app)
@@ -75,10 +72,10 @@ def create_app():
     
     with app.app_context():
         try:
-            from app.utils.auto_migrate import auto_migrate
-            auto_migrate(app)
+            db.create_all()
+            app.logger.info("✅ Database tables created successfully")
         except Exception as e:
-            app.logger.error(f"Auto-migration failed: {e}")
-            app.logger.info("Application will continue, but database schema may be outdated")
+            app.logger.error(f"Database initialization failed: {e}")
+            app.logger.info("Application will continue, but database may not be initialized")
     
     return app
