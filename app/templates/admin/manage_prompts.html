@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Prompts - Admin{% endblock %}
+
+{% block content %}
+<div class="py-8">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-4xl font-bold gradient-text mb-2">Manage Prompts</h1>
+            <p class="text-gray-600 dark:text-gray-400">View and manage all prompts</p>
+        </div>
+        <a href="{{ url_for('main.add_prompt') }}"
+            class="btn-primary text-white px-6 py-3 rounded-lg font-medium inline-flex items-center">
+            <i class="fas fa-plus mr-2"></i> Add New Prompt
+        </a>
+    </div>
+
+    <div class="card rounded-xl shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 dark:bg-slate-800">
+                    <tr>
+                        <th class="text-left py-4 px-6 font-semibold">Title</th>
+                        <th class="text-left py-4 px-6 font-semibold">Category</th>
+                        <th class="text-left py-4 px-6 font-semibold">Difficulty</th>
+                        <th class="text-left py-4 px-6 font-semibold">Views</th>
+                        <th class="text-left py-4 px-6 font-semibold">Created</th>
+                        <th class="text-left py-4 px-6 font-semibold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prompt in prompts %}
+                    <tr
+                        class="border-b border-gray-100 dark:border-slate-800 hover:bg-gray-50 dark:hover:bg-slate-800 transition">
+                        <td class="py-4 px-6">
+                            <a href="{{ url_for('main.view_prompt', id=prompt.id) }}"
+                                class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">
+                                {{ prompt.title }}
+                            </a>
+                        </td>
+                        <td class="py-4 px-6">
+                            <span
+                                class="px-3 py-1 rounded-full text-sm bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+                                {{ prompt.category_obj.name }}
+                            </span>
+                        </td>
+                        <td class="py-4 px-6">
+                            <span
+                                class="px-3 py-1 rounded-full text-sm {% if prompt.difficulty == 'Beginner' %}bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300{% elif prompt.difficulty == 'Intermediate' %}bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300{% else %}bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300{% endif %}">
+                                {{ prompt.difficulty }}
+                            </span>
+                        </td>
+                        <td class="py-4 px-6">{{ prompt.views }}</td>
+                        <td class="py-4 px-6">{{ prompt.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td class="py-4 px-6">
+                            <div class="flex space-x-3">
+                                <a href="{{ url_for('main.edit_prompt', id=prompt.id) }}"
+                                    class="text-blue-600 dark:text-blue-400 hover:underline">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form method="POST" action="{{ url_for('main.delete_prompt', id=prompt.id) }}"
+                                    onsubmit="return confirm('Are you sure you want to delete this prompt?');"
+                                    class="inline">
+                                    <button type="submit" class="text-red-600 dark:text-red-400 hover:underline">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

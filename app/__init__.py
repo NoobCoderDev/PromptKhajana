@@ -20,7 +20,7 @@ def initialize_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
-    login_manager.login_view = 'login'
+    login_manager.login_view = 'auth.login'
 
 def setup_user_loader():
     from app.models import User
@@ -31,7 +31,23 @@ def setup_user_loader():
 
 def register_blueprints(app):
     from app.routes import main_bp
+    from app.auth import auth_bp
+    from app.admin import admin_bp
+    
     app.register_blueprint(main_bp)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(admin_bp)
+
+def register_error_handlers(app):
+    from flask import render_template
+    
+    @app.errorhandler(403)
+    def forbidden(e):
+        return render_template('errors/403.html'), 403
+    
+    @app.errorhandler(404)
+    def not_found(e):
+        return render_template('errors/404.html'), 404
 
 def create_app():
     app = Flask(__name__)
@@ -39,6 +55,7 @@ def create_app():
     initialize_extensions(app)
     setup_user_loader()
     register_blueprints(app)
+    register_error_handlers(app)
     
     with app.app_context():
         db.create_all()

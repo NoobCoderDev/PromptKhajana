@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Access Denied - 403{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center">
+    <div class="text-center">
+        <i class="fas fa-lock text-8xl text-red-600 dark:text-red-400 mb-6"></i>
+        <h1 class="text-6xl font-bold text-gray-900 dark:text-gray-100 mb-4">403</h1>
+        <h2 class="text-3xl font-bold gradient-text mb-4">Access Denied</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-400 mb-8">
+            You don't have permission to access this page.
+        </p>
+        <p class="text-gray-600 dark:text-gray-400 mb-8">
+            This page is restricted to SuperAdmin users only.
+        </p>
+        <a href="{{ url_for('main.index') }}"
+            class="btn-primary text-white px-6 py-3 rounded-lg font-medium inline-block">
+            <i class="fas fa-home mr-2"></i> Go to Homepage
+        </a>
+    </div>
+</div>
+{% endblock %}

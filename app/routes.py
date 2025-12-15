@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, abort
+from flask_login import login_required, current_user
 from app import db
 from datetime import datetime
 from app.models import Prompt, Category, Tag
@@ -172,13 +173,13 @@ def index():
         current_sort=sort_by
     )
 
+
 @main_bp.route('/prompt/<int:id>')
+@login_required
 def view_prompt(id):
-    """View single prompt with markdown rendering"""
     prompt = get_prompt_by_id(id)
     increment_prompt_views(prompt)
     
-    # Get related prompts (same category, limit 3)
     related_prompts = Prompt.query.filter(
         Prompt.category_id == prompt.category_id,
         Prompt.id != prompt.id
@@ -203,8 +204,11 @@ def category(slug):
     )
 
 @main_bp.route('/add', methods=['GET', 'POST'])
+@login_required
 def add_prompt():
-    """Add new prompt"""
+    if not current_user.is_superadmin():
+        abort(403)
+    
     if request.method == 'POST':
         data = extract_form_data()
         prompt = create_prompt_from_data(data)
@@ -224,8 +228,11 @@ def add_prompt():
     )
 
 @main_bp.route('/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
 def edit_prompt(id):
-    """Edit existing prompt"""
+    if not current_user.is_superadmin():
+        abort(403)
+    
     prompt = get_prompt_by_id(id)
     
     if request.method == 'POST':
@@ -248,8 +255,11 @@ def edit_prompt(id):
     )
 
 @main_bp.route('/delete/<int:id>', methods=['POST'])
+@login_required
 def delete_prompt(id):
-    """Delete prompt (POST only for security)"""
+    if not current_user.is_superadmin():
+        abort(403)
+    
     prompt = get_prompt_by_id(id)
     delete_from_database(prompt)
     flash('Prompt deleted successfully!', 'success')

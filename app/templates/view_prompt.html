@@ -161,7 +161,7 @@
         </div>
         {% endif %}
 
-        <!-- Actions -->
+        {% if current_user.is_superadmin() %}
         <div class="flex flex-wrap gap-4">
             <a href="{{ url_for('main.edit_prompt', id=prompt.id) }}"
                 class="px-6 py-3 rounded-lg bg-gray-200 dark:bg-slate-700 text-gray-900 dark:text-gray-100 font-medium hover:bg-gray-300 dark:hover:bg-slate-600 transition">
@@ -185,6 +185,7 @@
                 </button>
             </form>
         </div>
+        {% endif %}
     </div>
 
     <!-- Sidebar -->
